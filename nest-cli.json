@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/graphql",
+        "options": {
+          "introspectComments": true
+        }
+      }
+    ],
+    "assets": [
+      {
+        "include": "./mailer-template/templates/**/*",
+        "outDir": "./dist/"
+      }
+    ]
+  }
+}

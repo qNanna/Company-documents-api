@@ -1,0 +1,344 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Address {
+  addressLine: String!
+  secondAddressLine: String
+  city: String!
+  state: String!
+  zip: String!
+  country: String!
+}
+
+type Role {
+  isBoardMember: Boolean!
+  isSigningOfficer: Boolean!
+  isDelegateAuthority: Boolean!
+  isOfficerOfOrganization: Boolean!
+  isAdmin: Boolean!
+}
+
+type User {
+  id: ID!
+  companyId: ID!
+  fullName: String!
+  jobTitle: String!
+  phoneNumber: String!
+  email: String!
+  address: Address!
+  sex: String!
+  signature: String
+  limit: String
+  requestId: String
+  role: Role!
+  isActive: Boolean!
+  onboarding: Boolean!
+  agreement: Boolean!
+  activationKey: String!
+}
+
+type RequestUser {
+  companyId: ID!
+  fullName: String!
+  jobTitle: String!
+  phoneNumber: String!
+  email: String!
+  address: Address!
+  sex: String!
+  signature: String
+  limit: String
+  requestId: String
+  role: Role!
+  id: ID
+}
+
+type Approver {
+  id: ID!
+  approved: Boolean
+  approvedAt: Float
+}
+
+type History {
+  date: Float!
+  action: String!
+}
+
+type Request {
+  id: ID!
+  companyId: ID!
+  type: String
+  number: Float
+  createdBy: String!
+  userData: RequestUser
+  toNotify: [String!]!
+  approvers: [Approver!]!
+  status: [String!]!
+  typeOfRequest: [String!]!
+  history: [History!]!
+  file: String!
+  completed: Boolean
+  createdAt: Float!
+  updatedAt: Float!
+}
+
+type Contact {
+  id: ID!
+  address: Address!
+  name: String!
+  role: String!
+  company: String!
+  phone: String!
+  email: String!
+  sex: String!
+}
+
+type Company {
+  id: ID!
+  name: String!
+  address: Address!
+  phoneNumber: String!
+  category: String!
+  logo: String
+  usersCount: Int
+  activeUsers: Int
+  isActive: Boolean!
+  contacts: [Contact]
+}
+
+type Admin {
+  id: ID!
+  fullName: String!
+  phoneNumber: String!
+  email: String!
+}
+
+input AddressModel {
+  addressLine: String!
+  secondAddressLine: String
+  city: String!
+  state: String!
+  zip: String!
+  country: String!
+}
+
+input UserRole {
+  isBoardMember: Boolean!
+  isSigningOfficer: Boolean!
+  isDelegateAuthority: Boolean!
+  isOfficerOfOrganization: Boolean!
+  isAdmin: Boolean!
+}
+
+type Query {
+  admin(id: ID!): Admin
+  getUploadUrl(fileInput: FileInput!): String!
+  getFileUrl(fileInput: FileInput!): String!
+  users(companyId: String!): [User!]
+  activeUsers(companyId: String!, isActive: Boolean!): [User!]
+  usersCount(countUsersInput: CountUsersInput!): Int!
+  user(id: ID!, companyId: ID!): User
+  getRequests: [Request!]
+  getRequest(id: ID!, companyId: ID!): Request
+  getCompanyRequests(companyId: ID!): [Request!]
+  companies: [Company!]
+  company(id: ID!): Company
+}
+
+input FileInput {
+  path: String
+  companyId: String!
+  filename: String!
+}
+
+input CountUsersInput {
+  companyId: ID!
+}
+
+type Mutation {
+  updateAdmin(updateAdminInput: UpdateAdminInput!): Admin!
+  createUser(createUserInput: CreateUserInput!): User!
+  createUserPassword(createUserPasswordInput: CreateUserPasswordInput!): Boolean!
+  updateUserPassword(updateUserPasswordInput: UpdateUserPasswordInput!): Boolean!
+  resetUserPassword(id: ID!, companyId: ID!): Boolean!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: ID!, companyId: ID!): ID!
+  inviteUser(inviteUserInput: InviteUserInput!): Boolean!
+  createRequest(createRequestInput: CreateRequestInput!): Request!
+  updateRequest(updateRequestInput: CreateRequestInput!): Request!
+  deleteRequest(deleteRequestInput: DeleteRequestInput!): Request!
+  corporateResolution(corporateResolution: CorporateResolutionInput!): Request!
+  shareSecurely(shareSecurely: ShareSecurelyInput!): String!
+  sentApproval(id: ID!, companyId: ID!): String!
+  signRequest(id: ID!, companyId: ID!): String!
+  completeRequest(id: ID!, companyId: ID!): Request!
+  declineRequest(id: ID!, companyId: ID!): Request!
+  createCompany(createCompanyInput: CreateCompanyInput!): Company!
+  activateCompany(id: ID!): Company!
+  updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
+  removeCompany(id: ID!): ID!
+  createCompanyContact(createCompanyContactInput: CreateCompanyContactInput!): Company!
+  updateCompanyContact(updateCompanyContactInput: UpdateCompanyContactInput!): Company!
+  removeCompanyContact(companyId: ID!, contactId: ID!): Company!
+}
+
+input UpdateAdminInput {
+  id: ID!
+  fullName: String!
+  phoneNumber: String!
+  email: String!
+}
+
+input CreateUserInput {
+  companyId: ID!
+  fullName: String!
+  jobTitle: String!
+  phoneNumber: String!
+  email: String!
+  address: AddressInput!
+  sex: String!
+  signature: String
+  limit: String
+  requestId: String
+  role: UserRole!
+}
+
+input AddressInput {
+  addressLine: String!
+  secondAddressLine: String
+  city: String!
+  state: String!
+  zip: String!
+  country: String!
+}
+
+input CreateUserPasswordInput {
+  id: String!
+  companyId: String!
+  activationKey: String!
+  password: String!
+}
+
+input UpdateUserPasswordInput {
+  id: String!
+  companyId: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  companyId: String!
+  fullName: String
+  jobTitle: String
+  phoneNumber: String
+  email: String
+  address: AddressInput
+  sex: String
+  signature: String
+  limit: String
+  requestId: String
+  role: UserRole
+  id: ID!
+  onboarding: Boolean
+  agreement: Boolean
+}
+
+input InviteUserInput {
+  id: String!
+  companyId: String!
+}
+
+input CreateRequestInput {
+  companyId: ID!
+  number: String
+  userData: UserRequestInput!
+  typeOfRequest: [String!]!
+  toNotify: [String!]
+  approvers: [ApproversInput!]!
+}
+
+input UserRequestInput {
+  fullName: String!
+  jobTitle: String!
+  phoneNumber: String!
+  email: String!
+  address: AddressInput!
+  sex: String!
+  signature: String
+  limit: String
+  requestId: String
+  role: UserRole!
+  id: ID
+}
+
+input ApproversInput {
+  id: ID!
+}
+
+input DeleteRequestInput {
+  companyId: ID!
+  number: String
+  userData: DeleteUserRequestInput!
+  typeOfRequest: [String!]!
+  toNotify: [String!]
+  approvers: [ApproversInput!]!
+}
+
+input DeleteUserRequestInput {
+  id: ID!
+  email: String
+}
+
+input CorporateResolutionInput {
+  companyId: ID!
+  number: String
+  typeOfRequest: [String!]!
+  toNotify: [String!]
+  approvers: [ApproversInput!]!
+}
+
+input ShareSecurelyInput {
+  companyId: ID!
+  emails: [String!]!
+  roles: [String!]!
+}
+
+input CreateCompanyInput {
+  name: String!
+  address: AddressInput!
+  phoneNumber: String!
+  category: String!
+  logo: String
+}
+
+input UpdateCompanyInput {
+  name: String
+  address: AddressInput
+  phoneNumber: String
+  category: String
+  logo: String
+  id: ID!
+  isActive: Boolean
+}
+
+input CreateCompanyContactInput {
+  companyId: ID!
+  address: AddressInput!
+  name: String!
+  role: String!
+  company: String!
+  phone: String!
+  email: String!
+  sex: String!
+}
+
+input UpdateCompanyContactInput {
+  companyId: ID!
+  address: AddressInput!
+  name: String!
+  role: String!
+  company: String!
+  phone: String!
+  email: String!
+  sex: String!
+  id: ID!
+}

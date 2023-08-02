@@ -1,0 +1,70 @@
+service: none-be
+package:
+  individually: true
+  excludeDevDependencies: true
+useDotenv: true
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    APP: none-${self:provider.stage}
+    COMPANY_TABLE: ${self:provider.stage}-company-table
+    USER_TABLE: ${self:provider.stage}-user-table
+    COGNITO_ADMIN_POOL_ID:
+      Ref: CognitoAdminPool
+    COGNITO_USER_POOL_ID:
+      Ref: CognitoUserPool
+    S3_BUCKET_ID:
+      Ref: AttachmentsBucket
+    S3_URL_EXPIRE_TIME: 3600
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-cognito-add-custom-attributes
+  - serverless-dynamodb-local
+  - serverless-offline
+resources:
+  - ${file(resources/cognito-admin-pool.yml)}
+  - ${file(resources/cognito-user-pool.yml)}
+  - ${file(resources/role.yml)}
+  - ${file(resources/s3-bucket.yml)}
+  - ${file(resources/dynamodb.yml)}
+custom:
+  dynamodb:
+    stages:
+      - ${self:provider.stage}
+    start:
+      docker: true
+      port: 8000
+      inMemory: true
+      sharedDb: true
+      noStart: true
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+  CognitoAddCustomAttributes:
+    CognitoUserPoolIdOutputKey: UserPoolId
+    CognitoUserPoolClientIdOutputKey: UserPoolClientId
+    CustomAttributes:
+      - AttributeDataType: String
+        DeveloperOnlyAttribute: false
+        Mutable: true
+        Name: company_id
+        Required: false
+      - AttributeDataType: String
+        DeveloperOnlyAttribute: false
+        Mutable: true
+        Name: onboarding
+        Required: false
+      - AttributeDataType: String
+        DeveloperOnlyAttribute: false
+        Mutable: true
+        Name: agreement
+        Required: false
+  lambdaNamePrefix: ${self:service}-${self:provider.environment.STAGE}
+  handlerNamePrefix: appsync-${self:custom.lambdaNamePrefix}
+  handlerArn: >-
+    arn:aws:lambda:${self:provider.region}:${env:ACCOUNT_ID_AWS}:function:${self:custom.handlerNamePrefix}
